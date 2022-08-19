@@ -1,6 +1,6 @@
 // 私钥，以后肯定不能这么写，这里为了测试
 const privateKey =
-  "f76ba05b9256abf7c6661c6604546b05a5ffe3b3d99e3e93fd400bf6c445c1e4";
+  "9df47d444a20043e3fd40604dc0f2825f42b92346d842609c17f3e8daa4c6b48";
 
 // 通过 参数 privateKey 私钥创建一个钱包实例
 const wallet = new ethers.Wallet(privateKey);
@@ -12,6 +12,7 @@ const activeWallet = wallet.connect(provider);
 
 console.log("activeWallet: ", activeWallet);
 
+// get wallet address
 $("#address").html(activeWallet.address);
 activeWallet
   .getBalance("pending")
@@ -26,6 +27,7 @@ activeWallet
 $("#btn1").click(function () {
   $.getJSON("/build/contracts/InfoContract.json", async function (data) {
     const address = data.networks["5777"].address;
+    // 获得签名
     const signer = provider.getSigner();
     const contract = new ethers.Contract(address, data.abi, signer);
     await contract.setInfo("fcc", parseInt(Math.random() * 20));
@@ -38,9 +40,10 @@ $("#btn2").click(function () {
     // const provider = ethers.getDefaultProvider();
     const address = data.networks["5777"].address;
     const contract = new ethers.Contract(address, data.abi, provider);
+    // 会把历史操作都获取出来
     contract.on("Instructor", (author, oldValue, newValue, event) => {
       // 在值变化的时候被调用
-      console.log(author);
+      console.log("author", author);
       console.log("oldValue", oldValue);
       // "Hello World"
       console.log("newValue", newValue);
@@ -48,13 +51,13 @@ $("#btn2").click(function () {
       $("#name").html(name);
       $("#age").html(age.toString());
     });
-    try {
-      const [name, age] = await contract.getInfo();
-      $("#name").html(name);
-      $("#age").html(age.toString());
-    } catch (e) {
-      console.log(e);
-    }
+    // try {
+    //   const [name, age] = await contract.getInfo();
+    //   $("#name").html(name);
+    //   $("#age").html(age.toString());
+    // } catch (e) {
+    //   console.log(e);
+    // }
   });
 });
 
