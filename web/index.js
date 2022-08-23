@@ -27,7 +27,7 @@ activeWallet
 $("#btn1").click(function () {
   $.getJSON("/build/contracts/InfoContract.json", async function (data) {
     const address = data.networks["5777"].address;
-    // 获得签名
+    // 获得 签名
     const signer = provider.getSigner();
     const contract = new ethers.Contract(address, data.abi, signer);
     await contract.setInfo("fcc", parseInt(Math.random() * 20));
