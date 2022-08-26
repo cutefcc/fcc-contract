@@ -1,19 +1,21 @@
-// 私钥，以后肯定不能这么写，这里为了测试
+// private key，以后肯定不能这么写，这里为了测试
 const privateKey =
   "9df47d444a20043e3fd40604dc0f2825f42b92346d842609c17f3e8daa4c6b48";
 
-// 通过 参数 privateKey 私钥创建一个钱包实例
+// create a wallet instance with the private key
 const wallet = new ethers.Wallet(privateKey);
 
-//连接 Ganache 本地测试网络
+// connect Ganache (local test network)
 const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:7545");
-// 返回连接到新的 Provider 的钱包实例
+// return a new wallet instance of connected new Provider
 const activeWallet = wallet.connect(provider);
 
 console.log("activeWallet: ", activeWallet);
 
-// get wallet address
+// get wallet address of Ganache
 $("#address").html(activeWallet.address);
+
+// get balance of Ganache
 activeWallet
   .getBalance("pending")
   .then((balance) => {
@@ -27,7 +29,7 @@ activeWallet
 $("#btn1").click(function () {
   $.getJSON("/build/contracts/InfoContract.json", async function (data) {
     const address = data.networks["5777"].address;
-    // 获得 签名
+    // get 签名
     const signer = provider.getSigner();
     const contract = new ethers.Contract(address, data.abi, signer);
     await contract.setInfo("fcc", parseInt(Math.random() * 20));
