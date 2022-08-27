@@ -19,12 +19,43 @@ $("#address").html(activeWallet.address);
 activeWallet
   .getBalance("pending")
   .then((balance) => {
+    // balance is a BigNumber instance 10^18 wei
     console.log("balance: ", balance);
-    $("#money").html(ethers.utils.formatEther(balance));
+    // show balance of Ganache
+    // 这里可以等待一些块的确认，然后再获取余额
+    $("#money").html(ethers.utils.formatEther(balance)); // balance in ethers.js format
   })
   .catch((error) => {
     console.log(error);
   });
+
+function swap() {
+  console.log("开始 转账", $("#wallet-send-target-address").val());
+  const targetAddress = ethers.utils.getAddress(
+    $("#wallet-send-target-address").val()
+  );
+  // number -> gwei
+  const amountWei = ethers.utils.parseEther($("#wallet-send-amount").val());
+
+  activeWallet
+    .sendTransaction({
+      to: targetAddress,
+      value: amountWei,
+      // gas setting
+      // gasPrace: activeWallet.provider.getGasPrice(),
+      // gasLimit: 21000,
+    })
+    .then(
+      function (data) {
+        console.log("转账 成功", data);
+        alert("Success");
+      },
+      function (error) {
+        console.log("转账 失败", error);
+        alert("Error");
+      }
+    );
+}
 
 $("#btn1").click(function () {
   $.getJSON("/build/contracts/InfoContract.json", async function (data) {
@@ -63,6 +94,6 @@ $("#btn2").click(function () {
   });
 });
 
-// $(document).on("click", "#ok", function () {
-//   swap();
-// });
+$(document).on("click", "#ok", function () {
+  swap();
+});
